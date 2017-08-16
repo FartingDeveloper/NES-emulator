@@ -1,13 +1,31 @@
 #include "CPU.h"
 
 
-
-CPU::CPU()
+CPU::CPU(Memory *& memory)
 {
+	this->memory = memory;
+
+	A = 0;
+	X = 0;
+	Y = 0;
+	SP = 0;
+	PC = 0;
+	P.C = 0;
+	P.Z = 0;
+	P.I = 1; 
+	P.D = 0;
+	P.B = 1;
+	P.V = 0;
+	P.N = 0;
+
 }
 
-void CPU::executeOpcode(byte opcode)
+void CPU::step()
 {
+	checkInterrupt();
+
+	byte opcode = memory->read(PC);
+
 	switch (opcode & 0xE0)
 	{
 	case 0x00: {
@@ -732,6 +750,29 @@ void CPU::executeOpcode(byte opcode)
 	PC++;
 }
 
+inline void CPU::checkInterrupt()
+{
+	byte NMI = memory->read(0x2000) & 0x8000;
+	byte IRQ = P.B;
+	if (NMI || IRQ) {
+		memory->pushWord(SP, PC);
+		PHP();
+		P.I = 1;
+
+		if (NMI) { //NMI Interrupt
+			word addr = 0xFFFA;
+			PC = memory->readWord(addr);
+		}
+		else if (IRQ) { //IRQ Interrupt
+			word addr = 0xFFFE;
+			PC = memory->readWord(addr);
+		}
+	} 
+	else {
+		return;
+	}
+}
+
 byte CPU::convertFlags()
 {
 	byte b = 0;
@@ -776,23 +817,23 @@ inline byte CPU::absolute()
 inline byte CPU::absoluteX()
 {
 	PC++;
-	word operandAddr = memory->readWord(PC) + X;
-	byte operand = memory->read(operandAddr);
+	word operandAddr = memory->readWord(PC);
+	byte operand = memory->read(operandAddr + X);
 	return operand;
 }
 
 inline byte CPU::absoluteY()
 {
 	PC++;
-	word operandAddr = memory->readWord(PC) + Y;
-	byte operand = memory->read(operandAddr);
+	word operandAddr = memory->readWord(PC);
+	byte operand = memory->read(operandAddr + Y);
 	return operand;
 }
 
 inline byte CPU::indexedInderect()
 {
 	PC++;
-	word operandAddr = (X + memory->read(PC)) & 0x00FF;
+	word operandAddr = (memory->read(PC + X)) & 0x00FF;
 	byte operand = memory->read(operandAddr);
 	return operand;
 }
@@ -810,7 +851,7 @@ inline byte CPU::zeropage()
 {
 	PC++;
 	word operandAddr = memory->read(PC);
-	byte operand = memory->read(operandAddr) & 0x00FF;
+	byte operand = memory->read(operandAddr & 0x00FF);
 	return operand;
 }
 
@@ -826,7 +867,7 @@ inline byte CPU::zeropageX()
 {
 	PC++;
 	word operandAddr = memory->read(PC);
-	byte operand = (memory->read(operandAddr) + X) & 0x00FF;
+	byte operand = memory->read((operandAddr + X) & 0x00FF);
 	return operand;
 }
 
@@ -834,7 +875,7 @@ inline byte CPU::zeropageY()
 {
 	PC++;
 	word operandAddr = memory->read(PC);
-	byte operand = (memory->read(operandAddr) + Y) & 0x00FF;
+	byte operand = memory->read((operandAddr + Y) & 0x00FF);
 	return operand;
 }
 

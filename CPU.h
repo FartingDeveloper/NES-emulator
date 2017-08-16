@@ -5,7 +5,7 @@ class CPU
 {
 	byte A, X, Y, SP;
 	word PC;
-	struct flags{
+	struct {
 		unsigned C : 1; //shift
 		unsigned Z : 1; //zero
 		unsigned I : 1; //interrupt allower(if I = 0 -> can interrupt, else no interrupting)
@@ -18,9 +18,10 @@ class CPU
 
 	Memory * memory;
 public:
-	CPU();
+	CPU(Memory *&memory);
 private:
-	void executeOpcode(byte opcode);
+	void step();
+	inline void checkInterrupt();
 
 	//address mode
 	inline byte immediate();

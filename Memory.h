@@ -1,12 +1,15 @@
 #pragma once
 #include "types.h"
+#include "Mapper.h"
 
 class Memory
 {
 	byte RAM[65536];
 	const word stack = 0x100;
+
+	Mapper * mapper;
 public:
-	Memory();
+	Memory(Mapper *&mapper);
 
 	word popWord(byte &addr);
 	void pushWord(byte &addr, word value);
@@ -19,5 +22,7 @@ public:
 
 	byte read(word addr);
 	void write(word addr, byte value);
+
+	void setMapper(Mapper * mapper);
 };
 
