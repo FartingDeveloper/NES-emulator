@@ -19,8 +19,9 @@ class CPU
 	Memory * memory;
 public:
 	CPU(Memory *&memory);
-private:
 	void step();
+	void reset();
+private:
 	inline void checkInterrupt();
 
 	//address mode

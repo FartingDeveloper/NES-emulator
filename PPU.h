@@ -33,5 +33,11 @@ class PPU
 	} PPUSTATUS;
 public:
 	PPU(Memory * memory);
+	byte readRegister(word addr);
+	void writeRegister(word addr, byte value);
+private:
+	void updatePPUCTRL();
+	void updatePPUMASK();
+	void updatePPUSTATUS();
 };
 

@@ -1,6 +1,7 @@
 #pragma once
 #include "types.h"
 #include "Mapper.h"
+#include "PPU.h"
 
 class Memory
 {
@@ -8,21 +9,21 @@ class Memory
 	const word stack = 0x100;
 
 	Mapper * mapper;
+	PPU * ppu;
 public:
-	Memory(Mapper *&mapper);
+	Memory(Mapper *&mapper, PPU *&ppu);
 
 	word popWord(byte &addr);
 	void pushWord(byte &addr, word value);
 
 	byte pop(byte &addr);
 	void push(byte &addr, byte value);
-
-	word readWord(word &addr);
-	void writeWord(word &addr, word value);
-
+	
+	word readWord(word addr);
 	byte read(word addr);
 	void write(word addr, byte value);
 
 	void setMapper(Mapper * mapper);
+	void reset();
 };
 

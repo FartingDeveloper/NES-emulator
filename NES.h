@@ -3,12 +3,15 @@
 
 class NES
 {
-	CPU *cpu;
-	Memory *memory;
+	CPU * cpu;
+	PPU * ppu;
+	Memory * memory;
 	Mapper * mapper;
 public:
 	NES();
 	void run();
 	void loadROM(byte *bytes, int size);
+private:
+	void reset();
 };
 

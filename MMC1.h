@@ -4,6 +4,6 @@
 class MMC1: public Mapper
 {
 public:
-	MMC1();
+	MMC1(byte * bytes, int size);
 };
 

@@ -750,6 +750,22 @@ void CPU::step()
 	PC++;
 }
 
+void CPU::reset()
+{
+	A = 0;
+	X = 0;
+	Y = 0;
+	SP = 0;
+	PC = 0;
+	P.C = 0;
+	P.Z = 0;
+	P.I = 1;
+	P.D = 0;
+	P.B = 1;
+	P.V = 0;
+	P.N = 0;
+}
+
 inline void CPU::checkInterrupt()
 {
 	byte NMI = memory->read(0x2000) & 0x8000;
