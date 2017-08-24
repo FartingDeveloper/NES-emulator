@@ -1,12 +1,12 @@
 #pragma once
 #include "types.h"
-#include "Memory.h"
+#include "VRAM.h"
+#include "OAM.h"
 
 class PPU
 {
-	Memory * memory;
-	byte OAM[256];
-
+	VRAM * vram;
+	OAM  * oam;
 	struct {
 		unsigned NMI : 1;
 		unsigned masterSlave : 1;
@@ -31,13 +31,24 @@ class PPU
 		unsigned spriteZeroHit : 1;
 		unsigned spriteOverflow : 1;
 	} PPUSTATUS;
+
+	word OAMADDR;
+	word PPUSCROLL;
+	word PPUADDR;
+	word OAMDMA;
+
+	int scanline;
+	int cycle;
 public:
-	PPU(Memory * memory);
+	PPU();
+	void step();
 	byte readRegister(word addr);
 	void writeRegister(word addr, byte value);
 private:
-	void updatePPUCTRL();
-	void updatePPUMASK();
-	void updatePPUSTATUS();
+	void tick();
+
+	inline void writePPUCTRL(byte value);
+	inline void writePPUMASK(byte value);
+	inline byte readPPUSTATUS();
 };
 

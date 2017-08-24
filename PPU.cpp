@@ -1,33 +1,79 @@
 #include "PPU.h"
 
 
-PPU::PPU(Memory * memory)
+PPU::PPU()
 {
-	this->memory = memory;
+	OAMADDR = 0;
+	PPUSCROLL = 0;
+	PPUADDR = 0;
+	OAMDMA = 0;
+}
+
+void PPU::step()
+{
+	tick();
+
+
 }
 
 byte PPU::readRegister(word addr)
 {
 	switch (addr)
 	{
+	case 0x2002:
+		return readPPUSTATUS();
+	case 0x2004:
+		return oam->read(OAMADDR);
+	case 0x2007:
+		return vram->read(PPUADDR);
 	default:
 		break;
 	}
-	return byte();
+	return -1;
 }
 
 void PPU::writeRegister(word addr, byte value)
 {
 	switch (addr)
 	{
+	case 0x2000:
+		writePPUCTRL(value);
+		break;
+	case 0x2001:
+		writePPUMASK(value);
+		break;
+	case 0x2003:
+		OAMADDR = value;
+		break;
+	case 0x2004:
+		oam->write(OAMADDR, value);
+		break;
+	case 0x2006:
+		PPUADDR |= value;
+		PPUADDR <<= 8;
+		break;
+	case 0x2007:
+		vram->write(PPUADDR, value);
+		break;
+	case 0x2014:
+		oam->write(OAMADDR, value);
+		OAMADDR++;
+		break;
 	default:
 		break;
 	}
 }
 
-void PPU::updatePPUCTRL()
+void PPU::tick()
 {
-	byte value = memory->read(0x2000);
+	if (cycle > 340) {
+		scanline++;
+		if (scanline > 261) scanline = 0;
+	}
+}
+
+void PPU::writePPUCTRL(byte value)
+{
 	int mask = 3;
 	PPUCTRL.nameTable = value & mask;
 	mask = 1;
@@ -39,9 +85,8 @@ void PPU::updatePPUCTRL()
 	PPUCTRL.NMI = value & (mask << 7);
 }
 
-void PPU::updatePPUMASK()
+void PPU::writePPUMASK(byte value)
 {
-	byte value = memory->read(0x2001);
 	int mask = 1;
 	PPUMASK.greyscale = value & mask;
 	PPUMASK.backgroundLeftColumnEnable = value & (mask << 1);
@@ -52,11 +97,11 @@ void PPU::updatePPUMASK()
 	PPUMASK.colorEmphasis = value & (mask << 5);
 }
 
-void PPU::updatePPUSTATUS()
+byte PPU::readPPUSTATUS()
 {
-	byte value = memory->read(0x2002);
+	byte value = 0;
 	int mask = 1;
-	PPUSTATUS.spriteOverflow = value & (mask << 5);
-	PPUSTATUS.spriteZeroHit = value & (mask << 6);
-	PPUSTATUS.vBlank = value & (mask << 7);
+	if (PPUSTATUS.spriteOverflow) value |= (mask << 5);
+	if (PPUSTATUS.spriteZeroHit) value |= (mask << 6);
+	if (PPUSTATUS.vBlank) value |= (mask << 7);
 }

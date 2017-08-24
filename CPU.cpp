@@ -1,6 +1,5 @@
 #include "CPU.h"
 
-
 CPU::CPU(Memory *& memory)
 {
 	this->memory = memory;

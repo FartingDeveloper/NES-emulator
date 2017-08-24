@@ -1,5 +1,5 @@
 #pragma once
-#include "Memory.h"
+#include "RAM.h"
 
 class CPU
 {

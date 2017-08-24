@@ -3,7 +3,13 @@
 
 NES::NES()
 {
-	memory = new Memory(mapper);
+	ppu = new PPU();
+	memory = new RAM(ppu, mapper);
 	cpu = new CPU(memory);
+}
+
+void NES::run()
+{
+
 }
 
