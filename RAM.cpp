@@ -61,7 +61,6 @@ byte RAM::read(word addr)
 	case 0x2000:
 	case 0x3000:
 		return ppu->readRegister(0x2000 + addr % 0x0008);
-
 	case 0x6000:
 	case 0x7000:
 	case 0x8000:
@@ -96,7 +95,7 @@ void RAM::write(word addr, byte value)
 			ppu->writeRegister(0x2003, 0);
 			word XX = 0;
 			XX = value << 8;
-			for (word i = XX; i < (XX | 0xFF); i++) {
+			for (word i = XX; i < (XX | 0x00FF); i++) {
 				value = read(i);
 				ppu->writeRegister(addr, value);
 			}

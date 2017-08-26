@@ -32,9 +32,13 @@ class PPU
 		unsigned spriteOverflow : 1;
 	} PPUSTATUS;
 
+	word v; //current VRAM addr
+	word t; //temporary VRAM addr
+
+	byte x; // x scroll
+	byte w; //first or second write toggle
+
 	word OAMADDR;
-	word PPUSCROLL;
-	word PPUADDR;
 	word OAMDMA;
 
 	int scanline;
@@ -49,6 +53,15 @@ private:
 
 	inline void writePPUCTRL(byte value);
 	inline void writePPUMASK(byte value);
+	inline void writePPUSCROLL(byte value);
+	inline void writeOAMADDR(byte value);
+	inline void writeOAMDATA(byte value);
+	inline void writePPUADDR(byte value);
+	inline void writePPUDATA(byte value);
+	inline void writeOAMDMA(byte value);
+
 	inline byte readPPUSTATUS();
+	inline byte readOAMDATA();
+	inline byte readPPUDATA();
 };
 
