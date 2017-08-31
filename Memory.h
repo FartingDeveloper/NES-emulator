@@ -2,7 +2,10 @@
 #include "types.h"
 
 class Memory {
+protected:
+	byte * memory;
 public:
-	virtual byte read(word addr) = 0;
-	virtual void write(word addr, byte value) = 0;
+	Memory(int size);
+	byte read(word addr);
+	void write(word addr, byte value);
 };

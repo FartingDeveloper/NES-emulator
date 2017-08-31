@@ -1,6 +1,6 @@
 #include "RAM.h"
 
-RAM::RAM(PPU *&ppu, Mapper *&mapper)
+RAM::RAM(int size, PPU *&ppu, Mapper *&mapper) :Memory(size)
 {
 	this->ppu = ppu;
 	this->mapper = mapper;

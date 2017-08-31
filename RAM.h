@@ -1,18 +1,17 @@
 #pragma once
 #include "types.h"
 #include "Mapper.h"
-#include "Memory.h"
 #include "PPU.h"
 
 class RAM : public Memory
 {
-	byte memory[65536];
+	byte * memory;
 	const word stack = 0x100;
 
 	Mapper * mapper;
 	PPU * ppu;
 public:
-	RAM(PPU *&ppu, Mapper *&mapper);
+	RAM(int size, PPU *&ppu, Mapper *&mapper);
 
 	word popWord(byte &addr);
 	void pushWord(byte &addr, word value);

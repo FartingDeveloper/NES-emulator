@@ -4,7 +4,7 @@
 NES::NES()
 {
 	ppu = new PPU();
-	memory = new RAM(ppu, mapper);
+	memory = new RAM(memorySize, ppu, mapper);
 	cpu = new CPU(memory);
 }
 

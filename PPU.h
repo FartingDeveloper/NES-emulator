@@ -1,28 +1,33 @@
 #pragma once
 #include "types.h"
-#include "VRAM.h"
-#include "OAM.h"
+#include "Memory.h"
 
 class PPU
 {
-	VRAM * vram;
-	OAM  * oam;
+	const int vRamSize = 16383;
+	const int oamSize = 256;
+
+	Memory * VRAM;
+	Memory  * OAM;
+
 	struct {
 		unsigned NMI : 1;
 		unsigned masterSlave : 1;
-		unsigned spriteHeight : 1;
-		unsigned backgroundTile : 1;
-		unsigned spriteTile : 1;
+		unsigned spriteSize : 1;
+		unsigned backgroundTileAddress : 1;
+		unsigned spriteTileAddress : 1;
 		unsigned incrementMode : 1;
-		unsigned nameTable : 2;
+		unsigned nametableAddress : 2;
 	} PPUCTRL;
 
 	struct {
-		unsigned colorEmphasis : 3;
-		unsigned spriteEnable : 1;
-		unsigned backgroundEnable : 1;
-		unsigned spriteLeftColumnEnable : 1;
-		unsigned backgroundLeftColumnEnable : 1;
+		unsigned blue : 1;
+		unsigned green : 1;
+		unsigned red : 1;
+		unsigned showSprite : 1;
+		unsigned showBackground : 1;
+		unsigned showLeftSprite : 1;
+		unsigned showLeftBackground : 1;
 		unsigned greyscale : 1;
 	} PPUMASK;
 
@@ -41,6 +46,15 @@ class PPU
 	word OAMADDR;
 	word OAMDMA;
 
+	word tileAddress;
+	word attrivuteAddress;
+
+	byte nameTableByte;
+	byte attributeTableByte;
+	byte lowTileByte;
+	byte hightTileByte;
+	byte tile[8];
+
 	int scanline;
 	int cycle;
 public:
@@ -50,6 +64,18 @@ public:
 	void writeRegister(word addr, byte value);
 private:
 	void tick();
+
+	void renderPixel();
+	void fetchNameTableByte();
+	void fetchAttributeTableByte();
+	void fetchLowTileByte();
+	void fetchHightTileByte();
+	void storeTileData();
+
+	void incrementX();
+	void incrementY();
+	void copyX();
+	void copyY();
 
 	inline void writePPUCTRL(byte value);
 	inline void writePPUMASK(byte value);

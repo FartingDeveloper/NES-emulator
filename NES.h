@@ -3,6 +3,8 @@
 
 class NES
 {
+	const int memorySize = 65536;
+
 	CPU * cpu;
 	PPU * ppu;
 	Memory * memory;
