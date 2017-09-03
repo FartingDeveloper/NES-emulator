@@ -1,6 +1,7 @@
 #pragma once
 #include "types.h"
 #include "Memory.h"
+#include "Palette.h"
 
 class PPU
 {
@@ -9,6 +10,11 @@ class PPU
 
 	Memory * VRAM;
 	Memory  * OAM;
+	
+	Palette * palette;
+
+	COLORREF screenBuffer[256 * 240];
+	int position;
 
 	struct {
 		unsigned NMI : 1;
@@ -53,7 +59,13 @@ class PPU
 	byte attributeTableByte;
 	byte lowTileByte;
 	byte hightTileByte;
-	byte tile[8];
+	__int32 tile; //tile = 8 bit, 4 bit = 1 pixel, 32 bit = tile image
+
+	int spriteCount;
+	__int32 spriteTiles[8];
+	byte spritePositions[8];
+	byte spritePriorities[8];
+	byte spriteIndexes[8];
 
 	int scanline;
 	int cycle;
@@ -62,15 +74,21 @@ public:
 	void step();
 	byte readRegister(word addr);
 	void writeRegister(word addr, byte value);
+	COLORREF * getScreenBuffer();
 private:
 	void tick();
 
 	void renderPixel();
+	byte backgroundPixel();
+	byte spritePixel();
+
 	void fetchNameTableByte();
 	void fetchAttributeTableByte();
 	void fetchLowTileByte();
 	void fetchHightTileByte();
 	void storeTileData();
+	void evaluateSprite();
+	__int32 fetchSpriteData(byte h, byte row, byte index, byte a);
 
 	void incrementX();
 	void incrementY();

@@ -22,6 +22,7 @@ void PPU::step()
 			renderPixel();
 		}
 		if ((visibleScanline || preScanline) && (visibleCycle || fetchScanlineCycle)) {
+			tile <<= 4;
 			switch (cycle % 8)
 			{
 			case 1:
@@ -45,6 +46,7 @@ void PPU::step()
 			incrementY();
 		}
 		if (cycle == 257) {
+			if(visibleScanline) evaluateSprite();
 			copyX();
 		}
 		if (preScanline && (cycle >= 280 && cycle <= 304)) {
@@ -117,6 +119,77 @@ void PPU::tick()
 	}
 }
 
+void PPU::renderPixel()
+{
+	int x = cycle - 1;
+	int y = scanline;
+	byte background = backgroundPixel();
+	byte sprite = spritePixel();
+	byte pixel;
+
+	if (!PPUMASK.showLeftBackground && (x < 7)) {
+		background = 0;
+	}
+	if (!PPUMASK.showLeftSprite && (x < 7)) {
+		sprite = 0;
+	}
+
+	bool backgroundTransparency = background % 4;
+	bool spriteTransparency = sprite % 4;
+
+	if (!backgroundTransparency && !spriteTransparency) {
+		pixel = 0;
+	}
+	else if (!backgroundTransparency && spriteTransparency) {
+		pixel = sprite | 0x10;
+	}
+	else if (backgroundTransparency && !spriteTransparency) {
+		pixel = background;
+	}
+	else{
+		if (spriteIndexes[spriteCount] == 0 && x < 255) {
+			PPUSTATUS.spriteZeroHit = 1;
+		}
+		if (spritePriorities[spriteCount]) {
+			pixel = background;
+		}
+		else {
+			pixel = sprite | 0x10;
+		}
+	}
+
+	byte color = VRAM->read(0x3F00 + pixel);
+	screenBuffer[y * 240 + x] = palette->transform(color % 64);
+}
+
+byte PPU::backgroundPixel()
+{
+	if (PPUMASK.showBackground) {
+		int x = (cycle - 1) % 8;
+		byte pixel = tile >> ((7 - x) * 4);
+		return (pixel & 0x0F);
+	}
+	else return 0;
+}
+
+byte PPU::spritePixel()
+{
+	if (PPUMASK.showSprite) {
+		for (int i = 0; i < 7; i++) {
+			int offset = (cycle - 1) - spritePositions[i];
+			if (offset >= 0 & offset < 8) {// in range
+				spriteCount = i;
+				byte pixel = spriteTiles[i] >> ((7 - offset) * 4);
+				if (pixel % 4 == 0) continue; //if transparent
+				return (pixel & 0x0F);
+			}
+		}
+	}
+	else {
+		return 0;
+	}
+}
+
 void PPU::fetchNameTableByte()
 {
 	word addr = 0x2000 | (v & 0x0FFF); //Tile address
@@ -126,14 +199,8 @@ void PPU::fetchNameTableByte()
 void PPU::fetchAttributeTableByte()
 {
 	word addr = 0x23C0 | (v & 0x0C00) | ((v >> 4) & 0x38) | ((v >> 2) & 0x07); //Attribute address
-	attributeTableByte = VRAM->read(addr);
-
-	byte mask = 3;
-	byte topLeft = attributeTableByte & mask;
-	byte topRight = (attributeTableByte >> 2) & mask;
-	byte bottomLeft = (attributeTableByte >> 4) & mask;
-	byte bottomRight = (attributeTableByte >> 6) & mask;
-	attributeTableByte = (topLeft << 0) | (topRight << 2) | (bottomLeft << 4) | (bottomRight << 6);
+	byte shift = ((v >> 4) & 4) | (v & 2);
+	attributeTableByte = ((VRAM->read(addr) >> shift) & 3) << 2;
 }
 
 void PPU::fetchLowTileByte()
@@ -154,7 +221,91 @@ void PPU::fetchHightTileByte()
 
 void PPU::storeTileData() //Turn the attribute data and the pattern table data into palette indices
 {
+	for (int i = 0; i < 8; i++) {
+		byte p1 = (lowTileByte & 0x80) >> 7;
+		byte p2 = (hightTileByte & 0x80) >> 6;
+		lowTileByte <<= 1;
+		hightTileByte <<= 1;
+		tile = attributeTableByte | p1 | p2;
+		tile <<= 4;
+	}
+}
 
+void PPU::evaluateSprite()
+{
+	byte h;
+	if (PPUCTRL.spriteSize) {
+		h = 16;
+	} 
+	else {
+		h = 8;
+	}
+	int count = 0;
+
+	for (int i = 0; i < 64; i++) {
+		byte y = OAM->read(i * 4);
+		byte index = OAM->read(i * 4 + 1);
+		byte a = OAM->read(i * 4 + 2);
+		byte x = OAM->read(i * 4 + 3);
+		byte row = scanline - y;
+
+		if (row >= 0 && row < h) { //in range
+			spriteTiles[count] = fetchSpriteData(h, row, index, a);
+			spritePositions[count] = x;
+			spritePriorities[count] = (a >> 5) & 1;
+			spriteIndexes[count] = i;
+			count++;
+		}
+	}
+	if (count > 8) {
+		PPUSTATUS.spriteOverflow = 1;
+	}
+}
+
+__int32 PPU::fetchSpriteData(byte h, byte row, byte index, byte a)
+{
+	__int32 tile = 0;
+	word addr;
+	if (PPUCTRL.spriteSize) {
+		word table = 0x1000 * (index & 1);
+		word tileNumber = index >> 1;
+		word offset = row;
+		if (a & 0x80) offset = 15 - row; //Flip sprite vertically
+		addr = table + tileNumber + row;
+	}
+	else {
+		word table = 0x1000 * PPUCTRL.spriteTileAddress;
+		word tileNumber = index >> 1;
+		word offset = row;
+		if (a & 0x80) offset = 7 - row; //Flip sprite vertically
+		addr = table + tileNumber + row;
+	}
+
+	byte lowTileByte = VRAM->read(addr);
+	byte hightTileByte = VRAM->read(addr + h);
+	byte palette = (a & 3) << 2;
+
+	if ((a << 1) & 0x80) { //Flip sprite horizontally
+		for (int i = 0; i < 8; i++) {
+			byte p1 = lowTileByte & 1;
+			byte p2 = hightTileByte & 1;
+			lowTileByte >>= 1;
+			hightTileByte >>= 1;
+			tile = palette | p1 | p2;
+			tile <<= 4;
+		}
+	}
+	else {
+		for (int i = 0; i < 8; i++) {
+			byte p1 = (lowTileByte & 0x80) >> 7;
+			byte p2 = (hightTileByte & 0x80) >> 6;
+			lowTileByte <<= 1;
+			hightTileByte <<= 1;
+			tile = palette | p1 | p2;
+			tile <<= 4;
+		}
+	}
+	return tile;
 }
 
 void PPU::incrementX()
