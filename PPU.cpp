@@ -5,7 +5,34 @@ PPU::PPU()
 {
 	VRAM = new Memory(vRamSize);
 	OAM = new Memory(oamSize);
+
+	PPUCTRL.backgroundTileAddress = 0;
+	PPUCTRL.incrementMode = 0;
+	PPUCTRL.masterSlave = 0;
+	PPUCTRL.nametableAddress = 0;
+	PPUCTRL.NMI = 0;
+	PPUCTRL.spriteSize = 0;
+	PPUCTRL.spriteTileAddress = 0;
+
+	PPUMASK.blue = 0;
+	PPUMASK.green = 0;
+	PPUMASK.greyscale = 0;
+	PPUMASK.red = 0;
+	PPUMASK.showBackground = 0;
+	PPUMASK.showLeftBackground = 0;
+	PPUMASK.showLeftSprite = 0;
+	PPUMASK.showSprite = 0;
+
+	PPUSTATUS.spriteOverflow = 0;
+	PPUSTATUS.spriteZeroHit = 0;
+	PPUSTATUS.vBlank = 0;
+
 	OAMADDR = 0;
+	OAMDMA = 0;
+
+	v = 0;
+	t = 0;
+	x = 0;
 }
 
 void PPU::step()
@@ -58,6 +85,37 @@ void PPU::step()
 	}
 
 	if (scanline == 241 && cycle == 1) PPUSTATUS.vBlank = 1; //Image ready
+}
+
+void PPU::reset()
+{
+	PPUCTRL.backgroundTileAddress = 0;
+	PPUCTRL.incrementMode = 0;
+	PPUCTRL.masterSlave = 0;
+	PPUCTRL.nametableAddress = 0;
+	PPUCTRL.NMI = 0;
+	PPUCTRL.spriteSize = 0;
+	PPUCTRL.spriteTileAddress = 0;
+
+	PPUMASK.blue = 0;
+	PPUMASK.green = 0;
+	PPUMASK.greyscale = 0;
+	PPUMASK.red = 0;
+	PPUMASK.showBackground = 0;
+	PPUMASK.showLeftBackground = 0;
+	PPUMASK.showLeftSprite = 0;
+	PPUMASK.showSprite = 0;
+
+	PPUSTATUS.spriteOverflow = 0;
+	PPUSTATUS.spriteZeroHit = 0;
+	PPUSTATUS.vBlank = 0;
+
+	OAMADDR = 0;
+	OAMDMA = 0;
+
+	v = 0;
+	t = 0;
+	x = 0;
 }
 
 byte PPU::readRegister(word addr)

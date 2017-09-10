@@ -7,7 +7,7 @@ class NES
 
 	CPU * cpu;
 	PPU * ppu;
-	Memory * memory;
+	RAM * memory;
 	Mapper * mapper;
 public:
 	NES();

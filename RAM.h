@@ -6,7 +6,6 @@
 class RAM : public Memory
 {
 	byte * memory;
-	const word stack = 0x100;
 
 	Mapper * mapper;
 	PPU * ppu;

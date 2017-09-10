@@ -72,6 +72,7 @@ class PPU
 public:
 	PPU();
 	void step();
+	void reset();
 	byte readRegister(word addr);
 	void writeRegister(word addr, byte value);
 	COLORREF * getScreenBuffer();

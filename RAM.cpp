@@ -11,26 +11,26 @@ RAM::RAM(int size, PPU *&ppu, Mapper *&mapper) :Memory(size)
 
 word RAM::popWord(byte & addr)
 {
-	word result = memory[stack + addr % 0x0800];
+	word result = memory[addr % 0x0800];
 	addr--;
 	result <<= 8;
-	result |= memory[stack + addr % 0x0800];
+	result |= memory[addr % 0x0800];
 	addr--;
 	return result;
 }
 
 void RAM::pushWord(byte & addr, word value)
 {
-	memory[stack + addr % 0x0800] = value & 0x00FF;
+	memory[addr % 0x0800] = value & 0x00FF;
 	addr++;
-	memory[stack + addr % 0x0800] = (value & 0xFF00) >> 8;
+	memory[addr % 0x0800] = (value & 0xFF00) >> 8;
 	addr++;
 
 }
 
 byte RAM::pop(byte & addr)
 {
-	byte result = memory[stack + addr % 0x0800];
+	byte result = memory[addr % 0x0800];
 	addr--;
 	return result;
 
@@ -38,7 +38,7 @@ byte RAM::pop(byte & addr)
 
 void RAM::push(byte & addr, byte value)
 {
-	memory[stack + addr % 0x0800] = value;
+	memory[addr % 0x0800] = value;
 	addr++;
 }
 

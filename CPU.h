@@ -16,10 +16,13 @@ class CPU
 		unsigned N : 1; //sign
 	} P;
 
-	Memory * memory;
+	RAM * memory;
+
+	int cycles;
+	bool pageCrossed;
 public:
-	CPU(Memory *&memory);
-	void step();
+	CPU(RAM *&memory);
+	int step();
 	void reset();
 private:
 	inline void checkInterrupt();
@@ -36,6 +39,7 @@ private:
 	inline byte zeropageX();
 	inline byte zeropageY();
 	inline word indirect();
+	inline void checkPageCrossing(word a, word b);
 
 	//commands
 	inline void ORA(byte &operand);
@@ -91,6 +95,8 @@ private:
 	inline void INX();
 	inline void BEQ();
 	inline void SED();
+	inline void BRK();
+	inline void BPL();
 
 	//check flags
 	inline byte convertFlags();
