@@ -7,14 +7,15 @@ class PPU
 {
 	const int vRamSize = 16383;
 	const int oamSize = 256;
+	const int screenWidth = 256;
+	const int screenHeight = 240;
 
 	Memory * VRAM;
 	Memory  * OAM;
 	
 	Palette * palette;
 
-	COLORREF screenBuffer[256 * 240];
-	int position;
+	COLORREF * screenBuffer;
 
 	struct {
 		unsigned NMI : 1;
@@ -73,9 +74,15 @@ public:
 	PPU();
 	void step();
 	void reset();
+
 	byte readRegister(word addr);
 	void writeRegister(word addr, byte value);
+
 	COLORREF * getScreenBuffer();
+	int getScreenWidth();
+	int getScreenHeight();
+
+	bool getDrawFlag();
 private:
 	void tick();
 

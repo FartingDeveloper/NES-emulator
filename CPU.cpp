@@ -950,9 +950,6 @@ inline void CPU::checkInterrupt()
 		}
 		cycles += 7;
 	} 
-	else {
-		return;
-	}
 }
 
 byte CPU::convertFlags()

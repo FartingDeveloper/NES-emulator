@@ -5,6 +5,7 @@ PPU::PPU()
 {
 	VRAM = new Memory(vRamSize);
 	OAM = new Memory(oamSize);
+	screenBuffer = new COLORREF[screenWidth * screenHeight];
 
 	PPUCTRL.backgroundTileAddress = 0;
 	PPUCTRL.incrementMode = 0;
@@ -165,6 +166,26 @@ void PPU::writeRegister(word addr, byte value)
 	default:
 		break;
 	}
+}
+
+COLORREF * PPU::getScreenBuffer()
+{
+	return screenBuffer;
+}
+
+int PPU::getScreenWidth()
+{
+	return screenWidth;
+}
+
+int PPU::getScreenHeight()
+{
+	return screenHeight;
+}
+
+bool PPU::getDrawFlag()
+{
+	return PPUSTATUS.vBlank;
 }
 
 void PPU::tick()

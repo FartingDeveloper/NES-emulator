@@ -7,12 +7,16 @@ class NES
 
 	CPU * cpu;
 	PPU * ppu;
-	RAM * memory;
+	RAM * ram;
 	Mapper * mapper;
 public:
 	NES();
 	void run();
 	void loadROM(byte *bytes, int size);
+	bool getDrawFlag();
+	COLORREF * getScreenBuffer();
+	int getScreenWidth();
+	int getScreenHeight();
 private:
 	void reset();
 };
