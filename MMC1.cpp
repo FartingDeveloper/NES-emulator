@@ -1,6 +1,6 @@
 #include "MMC1.h"
 
-MMC1::MMC1(byte * bytes, int size):Mapper(bytes, size)
+MMC1::MMC1(byte * bytes, int size):Memory(bytes, size)
 {
 }
 

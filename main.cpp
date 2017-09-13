@@ -112,10 +112,9 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 
 			openFile(hWnd, bytes, size);
 
-			console->loadROM(bytes, size);
-			loaded = true;
+			loaded = console->loadROM(bytes, size);
 
-			//delete[] bytes;
+			delete[] bytes;
 			break;
 		}
 		}

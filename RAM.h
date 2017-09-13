@@ -7,10 +7,10 @@ class RAM : public Memory
 {
 	byte * memory;
 
-	Mapper * mapper;
+	Memory * mapper;
 	PPU * ppu;
 public:
-	RAM(int size, PPU *&ppu, Mapper *&mapper);
+	RAM(int size, PPU *&ppu, Memory *&mapper);
 
 	word popWord(byte &addr);
 	void pushWord(byte &addr, word value);

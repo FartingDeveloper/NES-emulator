@@ -1,5 +1,7 @@
 #pragma once
 #include "CPU.h"
+#include "NROM.h"
+#include <string>
 
 class NES
 {
@@ -8,11 +10,13 @@ class NES
 	CPU * cpu;
 	PPU * ppu;
 	RAM * ram;
-	Mapper * mapper;
+	Memory * mapper;
 public:
 	NES();
+
 	void run();
-	void loadROM(byte *bytes, int size);
+	bool loadROM(byte *bytes, int size);
+
 	bool getDrawFlag();
 	COLORREF * getScreenBuffer();
 	int getScreenWidth();

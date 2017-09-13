@@ -1,6 +1,5 @@
 #include "NES.h"
 
-
 NES::NES()
 {
 	ppu = new PPU();
@@ -16,11 +15,27 @@ void NES::run()
 	}
 }
 
-void NES::loadROM(byte * bytes, int size)
+bool NES::loadROM(byte * bytes, int size)
 {
 	reset();
 	delete mapper;
 	
+	std::string name;
+	for (int i = 0; i < 3; i++) {
+		name += bytes[i];
+	}
+
+	if (name != "NES") return false;
+
+	switch (bytes[3])
+	{
+	case 0:
+		mapper = new NROM(bytes, size);
+		break;
+	default:
+		return false;
+	}
+	return true;
 }
 
 bool NES::getDrawFlag()
