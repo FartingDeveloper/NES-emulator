@@ -3,7 +3,9 @@
 NES::NES()
 {
 	ppu = new PPU();
-	ram = new RAM(memorySize, ppu, mapper);
+	controllerOne = new Controller();
+	controllerTwo = new Controller();
+	ram = new RAM(memorySize, ppu, mapper, controllerOne, controllerTwo);
 	cpu = new CPU(ram);
 }
 
@@ -20,7 +22,7 @@ bool NES::loadROM(byte * bytes, int size)
 	reset();
 	delete mapper;
 	
-	std::string name;
+	std::string name = "";
 	for (int i = 0; i < 3; i++) {
 		name += bytes[i];
 	}
@@ -56,6 +58,18 @@ int NES::getScreenWidth()
 int NES::getScreenHeight()
 {
 	return ppu->getScreenHeight();
+}
+
+void NES::pressKey(bool controllerNumber, byte value)
+{
+	if (controllerNumber) controllerOne->write(value);
+	else controllerTwo->write(value);
+}
+
+void NES::releaseKey(bool controllerNumber, byte value)
+{
+	if (controllerNumber) controllerOne->write(value);
+	else controllerTwo->write(value);
 }
 
 void NES::reset()

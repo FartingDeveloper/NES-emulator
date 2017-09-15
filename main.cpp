@@ -128,67 +128,35 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		switch (wParam)
 		{
 		case '1': {
-			chip->setKey(0);
+			console->pressKey(false, 0);
 			break;
 		}
 		case '2': {
-			chip->setKey(1);
+			console->pressKey(false, 1);
 			break;
 		}
 		case '3': {
-			chip->setKey(2);
+			console->pressKey(false, 2);
 			break;
 		}
 		case '4': {
-			chip->setKey(3);
+			console->pressKey(false, 3);
 			break;
 		}
 		case 'Q': {
-			chip->setKey(4);
+			console->pressKey(false, 4);
 			break;
 		}
 		case 'W': {
-			chip->setKey(5);
+			console->pressKey(false, 5);
 			break;
 		}
 		case 'E': {
-			chip->setKey(6);
+			console->pressKey(false, 6);
 			break;
 		}
 		case 'R': {
-			chip->setKey(7);
-			break;
-		}
-		case 'A': {
-			chip->setKey(8);
-			break;
-		}
-		case 'S': {
-			chip->setKey(9);
-			break;
-		}
-		case 'D': {
-			chip->setKey(10);
-			break;
-		}
-		case 'F': {
-			chip->setKey(11);
-			break;
-		}
-		case 'Z': {
-			chip->setKey(12);
-			break;
-		}
-		case 'X': {
-			chip->setKey(13);
-			break;
-		}
-		case 'C': {
-			chip->setKey(14);
-			break;
-		}
-		case 'V': {
-			chip->setKey(15);
+			console->pressKey(false, 7);
 			break;
 		}
 		default:
@@ -200,67 +168,35 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		switch (wParam)
 		{
 		case '1': {
-			chip->resetKey(0);
+			console->releaseKey(false, 0);
 			break;
 		}
 		case '2': {
-			chip->resetKey(1);
+			console->releaseKey(false, 1);
 			break;
 		}
 		case '3': {
-			chip->resetKey(2);
+			console->releaseKey(false, 2);
 			break;
 		}
 		case '4': {
-			chip->resetKey(3);
+			console->releaseKey(false, 3);
 			break;
 		}
 		case 'Q': {
-			chip->resetKey(4);
+			console->releaseKey(false, 4);
 			break;
 		}
 		case 'W': {
-			chip->resetKey(5);
+			console->releaseKey(false, 5);
 			break;
 		}
 		case 'E': {
-			chip->resetKey(6);
+			console->releaseKey(false, 6);
 			break;
 		}
 		case 'R': {
-			chip->resetKey(7);
-			break;
-		}
-		case 'A': {
-			chip->resetKey(8);
-			break;
-		}
-		case 'S': {
-			chip->resetKey(9);
-			break;
-		}
-		case 'D': {
-			chip->resetKey(10);
-			break;
-		}
-		case 'F': {
-			chip->resetKey(11);
-			break;
-		}
-		case 'Z': {
-			chip->resetKey(12);
-			break;
-		}
-		case 'X': {
-			chip->resetKey(13);
-			break;
-		}
-		case 'C': {
-			chip->resetKey(14);
-			break;
-		}
-		case 'V': {
-			chip->resetKey(15);
+			console->releaseKey(false, 7);
 			break;
 		}
 		default:

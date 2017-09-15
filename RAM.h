@@ -1,7 +1,7 @@
 #pragma once
 #include "types.h"
-#include "Mapper.h"
 #include "PPU.h"
+#include "Controller.h"
 
 class RAM : public Memory
 {
@@ -9,8 +9,10 @@ class RAM : public Memory
 
 	Memory * mapper;
 	PPU * ppu;
+	Controller * controllerOne;
+	Controller * controllerTwo;
 public:
-	RAM(int size, PPU *&ppu, Memory *&mapper);
+	RAM(int size, PPU *&ppu, Memory *&mapper, Controller *& controllerOne, Controller *& controllerTwo);
 
 	word popWord(byte &addr);
 	void pushWord(byte &addr, word value);
@@ -22,7 +24,7 @@ public:
 	byte read(word addr);
 	void write(word addr, byte value);
 
-	void setMapper(Mapper * mapper);
+	void setMapper(Memory * mapper);
 	void reset();
 };
 

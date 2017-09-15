@@ -1,9 +1,11 @@
 #include "RAM.h"
 
-RAM::RAM(int size, PPU *&ppu, Memory *&mapper) :Memory(size)
+RAM::RAM(int size, PPU *&ppu, Memory *&mapper, Controller *& controllerOne, Controller *& controllerTwo) :Memory(size)
 {
 	this->ppu = ppu;
 	this->mapper = mapper;
+	this->controllerOne = controllerOne;
+	this->controllerTwo = controllerTwo;
 	memory[4015] = 0x00;
 	memory[4017] = 0x00;
 	for (int i = 0x4000; i <= 0x400F; i++) memory[i] = 0x00;
@@ -61,6 +63,15 @@ byte RAM::read(word addr)
 	case 0x2000:
 	case 0x3000:
 		return ppu->readRegister(0x2000 + addr % 0x0008);
+	case 0x4000:
+		switch (addr)
+		{
+		case 0x4016:
+			return controllerOne->read();
+		case 0x4017:
+			return controllerTwo->read();
+		}
+		break;
 	case 0x6000:
 	case 0x7000:
 	case 0x8000:
@@ -100,7 +111,14 @@ void RAM::write(word addr, byte value)
 				ppu->writeRegister(addr, value);
 			}
 			break;
+		case 0x4016:
+			controllerOne->write(value);
+			break;
+		case 0x4017:
+			controllerTwo->write(value);
+			break;
 		}
+		break;
 	case 0x6000:
 	case 0x7000:
 	case 0x8000:
@@ -116,7 +134,7 @@ void RAM::write(word addr, byte value)
 	}
 }
 
-void RAM::setMapper(Mapper * mapper)
+void RAM::setMapper(Memory * mapper)
 {
 	this->mapper = mapper;
 }
