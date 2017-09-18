@@ -24,8 +24,8 @@ public:
 	int getScreenWidth();
 	int getScreenHeight();
 
-	void pressKey(bool controllerNumber, byte value);
-	void releaseKey(bool controllerNumber, byte value);
+	void pressKey(bool controllerNumber, byte button);
+	void releaseKey(bool controllerNumber, byte button);
 private:
 	void reset();
 };

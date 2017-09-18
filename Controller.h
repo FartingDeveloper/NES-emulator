@@ -13,10 +13,16 @@ class Controller
 		unsigned left : 1;
 		unsigned right : 1;
 	} buttons;
+
+	byte strobe;
+	byte offset;
 public:
 	Controller();
 
-	void write(byte value);
+	void setButton(byte button, byte value);
+	void write(byte s);
 	byte read();
+private:
+	byte convertButtons();
 };
 

@@ -60,16 +60,16 @@ int NES::getScreenHeight()
 	return ppu->getScreenHeight();
 }
 
-void NES::pressKey(bool controllerNumber, byte value)
+void NES::pressKey(bool controllerNumber, byte button)
 {
-	if (controllerNumber) controllerOne->write(value);
-	else controllerTwo->write(value);
+	if (controllerNumber) controllerOne->write(button, 1);
+	else controllerTwo->setButton(button, 1);
 }
 
-void NES::releaseKey(bool controllerNumber, byte value)
+void NES::releaseKey(bool controllerNumber, byte button)
 {
-	if (controllerNumber) controllerOne->write(value);
-	else controllerTwo->write(value);
+	if (controllerNumber) controllerOne->write(button, 0);
+	else controllerTwo->setButton(button, 0);
 }
 
 void NES::reset()
