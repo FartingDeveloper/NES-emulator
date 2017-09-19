@@ -83,7 +83,7 @@ int CPU::step()
 	}
 	case 0x10: {
 		BPL();
-		return;
+		return cycles;
 	}
 	case 0x11: {
 		byte operand = inderectIndexed();
@@ -131,7 +131,7 @@ int CPU::step()
 	case 0x20: {
 		JSR();
 		cycles += 6;
-		return;
+		return cycles;
 	}
 	case 0x21: {
 		byte operand = indexedInderect();
@@ -193,7 +193,7 @@ int CPU::step()
 	}
 	case 0x30: {
 		BMI();
-		return;
+		return cycles;
 	}
 	case 0x31: {
 		byte operand = inderectIndexed();
@@ -241,7 +241,7 @@ int CPU::step()
 	case 0x40: {
 		RTI();
 		cycles += 6;
-		return;
+		return cycles;
 	}
 	case 0x41: {
 		byte operand = indexedInderect();
@@ -281,7 +281,7 @@ int CPU::step()
 		word addr = absolute();
 		JMP(addr);
 		cycles += 3;
-		return;
+		return cycles;
 	}
 	case 0x4D: {
 		byte operand = absolute();
@@ -297,7 +297,7 @@ int CPU::step()
 	}
 	case 0x50: {
 		BVC();
-		return;
+		return cycles;
 	}
 	case 0x51: {
 		byte operand = inderectIndexed();
@@ -346,7 +346,7 @@ int CPU::step()
 	case 0x60: {
 		RTS();
 		cycles += 6;
-		return;
+		return cycles;
 	}
 	case 0x61: {
 		byte operand = indexedInderect();
@@ -386,7 +386,7 @@ int CPU::step()
 		word operand = indirect();
 		JMP(operand);
 		cycles += 5;
-		return;
+		return cycles;
 	}
 	case 0x6D: {
 		byte operand = absolute();
@@ -402,7 +402,7 @@ int CPU::step()
 	}
 	case 0x70: {
 		BVS();
-		return;
+		return cycles;
 	}
 	case 0x71: {
 		byte operand = inderectIndexed();
@@ -502,7 +502,7 @@ int CPU::step()
 	}
 	case 0x90: {
 		BCC();
-		return;
+		return cycles;
 	}
 	case 0x91: {
 		byte operand = inderectIndexed();
@@ -622,7 +622,7 @@ int CPU::step()
 	}
 	case 0xB0: {
 		BCS();
-		return;
+		return cycles;
 	}
 	case 0xB1: {
 		byte operand = inderectIndexed();
@@ -753,7 +753,7 @@ int CPU::step()
 	}
 	case 0xD0: {
 		BNE();
-		return;
+		return cycles;
 	}
 	case 0xD1: {
 		byte operand = inderectIndexed();
@@ -864,7 +864,7 @@ int CPU::step()
 	}
 	case 0xF0: {
 		BEQ();
-		return;
+		return cycles;
 	}
 	case 0xF1: {
 		byte operand = inderectIndexed();

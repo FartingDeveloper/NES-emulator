@@ -6,9 +6,9 @@ RAM::RAM(int size, PPU *&ppu, Memory *&mapper, Controller *& controllerOne, Cont
 	this->mapper = mapper;
 	this->controllerOne = controllerOne;
 	this->controllerTwo = controllerTwo;
-	memory[4015] = 0x00;
-	memory[4017] = 0x00;
-	for (int i = 0x4000; i <= 0x400F; i++) memory[i] = 0x00;
+	memory[4015] = (byte) 0x00;
+	memory[4017] = (byte) 0x00;
+	for (int i = 0x4000; i <= 0x400F; i++) (byte) memory[i] = 0x00;
 }
 
 word RAM::popWord(byte & addr)
@@ -102,7 +102,7 @@ void RAM::write(word addr, byte value)
 	case 0x4000:
 		switch (addr)
 		{
-		case 0x4014:
+		case 0x4014:{
 			ppu->writeRegister(0x2003, 0);
 			word XX = 0;
 			XX = value << 8;
@@ -111,6 +111,7 @@ void RAM::write(word addr, byte value)
 				ppu->writeRegister(addr, value);
 			}
 			break;
+		}
 		case 0x4016:
 			controllerOne->write(value);
 			break;
@@ -141,9 +142,8 @@ void RAM::setMapper(Memory * mapper)
 
 void RAM::reset()
 {
-	this->mapper = nullptr;
-	memory[4015] = 0x00;
-	memory[4017] = 0x00;
-	for (int i = 0x4000; i <= 0x400F; i++) memory[i] = 0x00;
+	memory[4015] = (byte)0x00;
+	memory[4017] = (byte)0x00;
+	for (int i = 0x4000; i <= 0x400F; i++) (byte) memory[i] = 0x00;
 }
 

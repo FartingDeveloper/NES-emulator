@@ -5,8 +5,6 @@
 
 class RAM : public Memory
 {
-	byte * memory;
-
 	Memory * mapper;
 	PPU * ppu;
 	Controller * controllerOne;

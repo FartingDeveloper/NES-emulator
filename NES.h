@@ -1,7 +1,5 @@
 #pragma once
 #include "CPU.h"
-#include "NROM.h"
-#include <string>
 
 class NES
 {

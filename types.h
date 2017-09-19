@@ -1,4 +1,4 @@
 #pragma once
 
 typedef unsigned char byte;
-typedef short int word;
+typedef unsigned short int word;

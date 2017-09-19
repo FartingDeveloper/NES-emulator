@@ -1,10 +1,12 @@
 #include "NES.h"
+#include "NROM.h"
 
 NES::NES()
 {
 	ppu = new PPU();
 	controllerOne = new Controller();
 	controllerTwo = new Controller();
+	mapper = new Memory();
 	ram = new RAM(memorySize, ppu, mapper, controllerOne, controllerTwo);
 	cpu = new CPU(ram);
 }
@@ -22,17 +24,12 @@ bool NES::loadROM(byte * bytes, int size)
 	reset();
 	delete mapper;
 	
-	std::string name = "";
-	for (int i = 0; i < 3; i++) {
-		name += bytes[i];
-	}
+	byte type = (bytes[6] & 0xF0 >> 4) | bytes[7] & 0xF0;
 
-	if (name != "NES") return false;
-
-	switch (bytes[3])
+	switch (type)
 	{
 	case 0:
-		mapper = new NROM(bytes, size);
+		mapper = new NROM(bytes, size); //NROM
 		break;
 	default:
 		return false;
@@ -62,14 +59,14 @@ int NES::getScreenHeight()
 
 void NES::pressKey(bool controllerNumber, byte button)
 {
-	if (controllerNumber) controllerOne->write(button, 1);
-	else controllerTwo->setButton(button, 1);
+	if (controllerNumber) controllerOne->setButton(button, true);
+	else controllerTwo->setButton(button, true);
 }
 
 void NES::releaseKey(bool controllerNumber, byte button)
 {
-	if (controllerNumber) controllerOne->write(button, 0);
-	else controllerTwo->setButton(button, 0);
+	if (controllerNumber) controllerOne->setButton(button, false);
+	else controllerTwo->setButton(button, false);
 }
 
 void NES::reset()

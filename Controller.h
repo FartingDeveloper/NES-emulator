@@ -19,7 +19,7 @@ class Controller
 public:
 	Controller();
 
-	void setButton(byte button, byte value);
+	void setButton(byte button, bool value);
 	void write(byte s);
 	byte read();
 private:

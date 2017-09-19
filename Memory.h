@@ -5,8 +5,9 @@ class Memory {
 protected:
 	byte * memory;
 public:
+	Memory();
 	Memory(int size);
-	Memory(byte * bytes, int size); //for mappers
+	void init(byte * bytes, int size); //for mappers
 	virtual byte read(word addr);
 	virtual void write(word addr, byte value);
 };

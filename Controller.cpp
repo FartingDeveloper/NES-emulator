@@ -8,7 +8,7 @@ Controller::Controller()
 	offset = 0;
 }
 
-void Controller::setButton(byte button, byte value)
+void Controller::setButton(byte button, bool value)
 {
 	switch (button)
 	{
@@ -61,12 +61,12 @@ byte Controller::convertButtons()
 	byte res = 0;
 	byte shift = 1;
 	if (buttons.A) res = shift;
-	if (buttons.B) res += shift << 1;
-	if (buttons.select) res += shift << 2;
-	if (buttons.start) res += shift << 3;
-	if (buttons.up) res += shift << 4;
-	if (buttons.down) res += shift << 5;
-	if (buttons.left) res += shift << 6;
-	if (buttons.right) res += shift << 7;
+	if (buttons.B) res |= shift << 1;
+	if (buttons.select) res |= shift << 2;
+	if (buttons.start) res |= shift << 3;
+	if (buttons.up) res |= shift << 4;
+	if (buttons.down) res |= shift << 5;
+	if (buttons.left) res |= shift << 6;
+	if (buttons.right) res |= shift << 7;
 	return res;
 }

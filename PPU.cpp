@@ -544,6 +544,8 @@ byte PPU::readPPUSTATUS()
 
 	//w:=0
 	w = 0;
+
+	return value;
 }
 
 inline byte PPU::readOAMDATA()

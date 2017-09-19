@@ -13,6 +13,7 @@ NES * console;
 bool loaded = false;
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+void prepareWindow(HINSTANCE &hInstance, WNDCLASSEX &wc, HWND &hWnd);
 void openFile(HWND hWnd, unsigned char *&bytes, int &size);
 void drawGraphics(HDC hdc, COLORREF * pixels, int w, int h);
 
@@ -24,6 +25,40 @@ int WINAPI WinMain(HINSTANCE hInstance, // identifier of program
 	HWND hWnd;
 	WNDCLASSEX wc;
 
+	prepareWindow(hInstance, wc, hWnd);
+
+	ShowWindow(hWnd, nCmdShow);
+
+	MSG msg;
+
+	console = new NES();
+
+	COLORREF * screen = console->getScreenBuffer();
+	int screenWidth = console->getScreenWidth();
+	int screenHeight = console->getScreenHeight();
+
+	while (true) {
+		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
+		{
+			TranslateMessage(&msg); //change format of msg
+			DispatchMessage(&msg); //send to window proc
+			if (msg.message == WM_QUIT) break;
+		}
+		else {
+			if (loaded) {
+				console->run();
+
+				if (console->getDrawFlag()) {
+					drawGraphics(GetDC(hWnd), screen, screenWidth, screenHeight);
+				}
+			}
+		}
+	}
+	return msg.wParam;
+}
+
+void prepareWindow(HINSTANCE &hInstance, WNDCLASSEX & wc, HWND & hWnd)
+{
 	ZeroMemory(&wc, sizeof(WNDCLASSEX));
 
 	wc.cbSize = sizeof(WNDCLASSEX); //structure size
@@ -51,39 +86,6 @@ int WINAPI WinMain(HINSTANCE hInstance, // identifier of program
 		NULL, //menu bar handler
 		hInstance,
 		NULL);
-
-	ShowWindow(hWnd, nCmdShow);
-
-	MSG msg;
-
-	console = new NES();
-
-	COLORREF * screen = console->getScreenBuffer();
-	int screenWidth = console->getScreenWidth();
-	int screenHeight = console->getScreenHeight();
-
-	time_t currentTime = time(0);
-	while (true) {
-		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-		{
-			TranslateMessage(&msg); //change format of msg
-			DispatchMessage(&msg); //send to window proc
-			if (msg.message == WM_QUIT) break;
-		}
-		else {
-			if (loaded) {
-				time_t now = time(0);
-
-				if (now - currentTime > 0.016) 	console->run();
-
-				if (console->getDrawFlag()) {
-					drawGraphics(GetDC(hWnd), screen, screenWidth, screenHeight);
-					currentTime = now;
-				}
-			}
-		}
-	}
-	return msg.wParam;
 }
 
 LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
@@ -96,8 +98,8 @@ LRESULT CALLBACK WindowProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lPara
 		hMenu = CreateMenu();
 		hSubMenu = CreatePopupMenu();
 
-		AppendMenu(hSubMenu, MF_STRING, ID_FILE_OPEN, _T("Open"));
-		AppendMenu(hMenu, MF_STRING | MF_POPUP, (UINT)hSubMenu, _T("File"));
+		AppendMenu(hSubMenu, MF_STRING, ID_FILE_OPEN, L"Open");
+		AppendMenu(hMenu, MF_STRING | MF_POPUP, (UINT)hSubMenu, L"File");
 
 		SetMenu(hWnd, hMenu);
 
@@ -227,22 +229,20 @@ void openFile(HWND hWnd, unsigned char *&bytes, int &size)
 
 	if (GetOpenFileName(&ofn))
 	{
-		size_t i;
-		char tmp[MAX_PATH];
-		wcstombs_s(&i, tmp, MAX_PATH, fileName, MAX_PATH);
-		const char *name = tmp;
+		std::ifstream in(fileName, std::ios::binary | std::ios::ate);
+		
+		if (!in) return;
 
-		FILE * file;
-		fopen_s(&file, name, "rb");
-		if (file == NULL) return;
-		fseek(file, 0, SEEK_END);
-		size = ftell(file);
-		fclose(file);
+		size = in.tellg();
+		bytes = new byte[size];
 
-		fopen_s(&file, name, "rb");
-		bytes = new unsigned char[size];
-		int bytes_read = fread(bytes, sizeof(unsigned char), size, file);
-		fclose(file);
+		in.seekg(std::ios::beg);
+
+		for (int i = 0; i < size; i++) {
+			in >> bytes[i];
+		}
+
+		in.close();
 	}
 }
 
