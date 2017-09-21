@@ -1,9 +1,8 @@
 #include "RAM.h"
 
-RAM::RAM(int size, PPU *&ppu, Memory *&mapper, Controller *& controllerOne, Controller *& controllerTwo) :Memory(size)
+RAM::RAM(int size, PPU *&ppu, Controller *& controllerOne, Controller *& controllerTwo) :Memory(size)
 {
 	this->ppu = ppu;
-	this->mapper = mapper;
 	this->controllerOne = controllerOne;
 	this->controllerTwo = controllerTwo;
 	memory[4015] = (byte) 0x00;
@@ -137,6 +136,7 @@ void RAM::write(word addr, byte value)
 
 void RAM::setMapper(Memory * mapper)
 {
+	delete this->mapper;
 	this->mapper = mapper;
 }
 

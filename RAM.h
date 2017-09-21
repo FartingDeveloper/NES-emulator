@@ -10,7 +10,7 @@ class RAM : public Memory
 	Controller * controllerOne;
 	Controller * controllerTwo;
 public:
-	RAM(int size, PPU *&ppu, Memory *&mapper, Controller *& controllerOne, Controller *& controllerTwo);
+	RAM(int size, PPU *&ppu, Controller *& controllerOne, Controller *& controllerTwo);
 
 	word popWord(byte &addr);
 	void pushWord(byte &addr, word value);

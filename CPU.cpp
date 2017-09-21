@@ -10,13 +10,13 @@ CPU::CPU(RAM *& memory)
 	X = 0;
 	Y = 0;
 	SP = 0xFD;
-	PC = memory->read(0xFFFD)*256 + memory->read(0xFFFC);
+	PC = 0;
 	P.C = 0;
 	P.Z = 0;
-	P.I = 1; 
-	P.D = 0;
+	P.I = 0; 
+	P.D = 1;
 	P.B = 1;
-	P.V = 0;
+	P.V = 1;
 	P.N = 0;
 }
 
@@ -924,10 +924,10 @@ void CPU::reset()
 	PC = memory->read(0xFFFD)*256 + memory->read(0xFFFC);
 	P.C = 0;
 	P.Z = 0;
-	P.I = 1;
-	P.D = 0;
+	P.I = 0;
+	P.D = 1;
 	P.B = 1;
-	P.V = 0;
+	P.V = 1;
 	P.N = 0;
 }
 

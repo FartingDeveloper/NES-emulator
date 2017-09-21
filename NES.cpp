@@ -6,8 +6,7 @@ NES::NES()
 	ppu = new PPU();
 	controllerOne = new Controller();
 	controllerTwo = new Controller();
-	mapper = new Memory();
-	ram = new RAM(memorySize, ppu, mapper, controllerOne, controllerTwo);
+	ram = new RAM(memorySize, ppu, controllerOne, controllerTwo);
 	cpu = new CPU(ram);
 }
 
@@ -21,8 +20,7 @@ void NES::run()
 
 bool NES::loadROM(byte * bytes, int size)
 {
-	reset();
-	delete mapper;
+	Memory * mapper;
 	
 	byte type = (bytes[6] & 0xF0 >> 4) | bytes[7] & 0xF0;
 
@@ -34,6 +32,11 @@ bool NES::loadROM(byte * bytes, int size)
 	default:
 		return false;
 	}
+
+	ram->setMapper(mapper);
+
+	reset();
+
 	return true;
 }
 

@@ -8,7 +8,6 @@ class NES
 	CPU * cpu;
 	PPU * ppu;
 	RAM * ram;
-	Memory * mapper;
 	Controller * controllerOne;
 	Controller * controllerTwo;
 public:
